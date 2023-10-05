@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $row['id']; // Ajout de l'ID de l'utilisateur dans la session
             $_SESSION['username'] = $row['username'];
             
-            header("Location: dashbord.php");
+            header("Location: auth/dashboard");
             exit;            
         } else {
             $erreur = "Mot de passe incorrect.";
@@ -92,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- Lien : Mot de passe oublié -->
         <div class="form-group">
-            <a href="signup.php">Créer un compte</a> &emsp;&emsp; <!-- <a href="#">Mot de passe oublié ?</a> -->
+            <a href="/auth/signup">Créer un compte</a> &emsp;&emsp; <!-- <a href="#">Mot de passe oublié ?</a> -->
         </div>
 
         <!-- Bouton d'envoi -->

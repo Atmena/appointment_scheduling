@@ -25,7 +25,7 @@ if (isset($_SESSION['username'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,10 +33,19 @@ if (isset($_SESSION['username'])) {
     <!-- Inclure les styles Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Inclure les fichiers CSS et JavaScript de FullCalendar -->
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.0/main.min.css' rel='stylesheet' />
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.0/main.min.js'></script>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.0/main.min.css' rel='stylesheet'/>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridWeek'
+        });
+        calendar.render();
+        calendar.setOption('locale', 'fr');
+        calendar.setOption('height', 500);
+      });
+    </script>
 </head>
 <body>
 
@@ -66,33 +75,7 @@ if (isset($_SESSION['username'])) {
 </div>
 
 <script>
-$(document).ready(function() {
-    // Initialisez le calendrier
-    $('#calendar').fullCalendar({
-        // Options du calendrier
-        header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay'
-        },
-        defaultView: 'month', // Affichez le mois par défaut
-        editable: false, // Définissez cette option sur true si vous souhaitez permettre la modification des événements par glisser-déposer
-        events: [
-            // Liste des événements à afficher sur le calendrier
-            {
-                title: 'Événement 1',
-                start: '2023-10-10T10:00:00',
-                end: '2023-10-10T12:00:00'
-            },
-            {
-                title: 'Événement 2',
-                start: '2023-10-15T14:00:00',
-                end: '2023-10-15T16:00:00'
-            },
-            // Ajoutez d'autres événements ici
-        ]
-    });
-});
+
 </script>
 
 <!-- Inclure les scripts Bootstrap -->
