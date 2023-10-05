@@ -1,0 +1,119 @@
+<?php
+session_start();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $erreurs = [];
+
+    if (empty($username)) {
+        $erreurs[] = "Le prénom est requis.";
+    }
+
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $erreurs[] = "L'adresse e-mail est invalide.";
+    }
+
+    if (empty($password)) {
+        $erreurs[] = "Le mot de passe est requis.";
+    }
+
+    if ($_POST['password'] !== $_POST['password_repeat']) {
+        $erreurs[] = "Les mots de passe ne correspondent pas.";
+    }
+
+    $host = 'db';
+    $dbname = getenv('MYSQL_DATABASE');
+    $username = getenv('MYSQL_USER');
+    $passwd = getenv('MYSQL_PASSWORD');
+
+    try {
+        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $passwd);
+    } catch (PDOException $e) {
+        die("Erreur de connexion à la base de données: " . $e->getMessage());
+    }
+
+    $existingEmail = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
+    $existingEmail->execute([$email]);
+    $count = $existingEmail->fetchColumn();
+
+    if ($count > 0) {
+        $erreurs[] = "Un compte est déjà enregistré sous cette adresse mail.";
+    }
+
+    if (empty($erreurs)) {
+        $sql = "INSERT INTO users (username, password_hash, email) VALUES (?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$username, password_hash($password, PASSWORD_DEFAULT), $email]);
+    
+        header("Location: confirmation.php");
+        exit;
+    } else {
+        $_SESSION['erreurs'] = $erreurs;
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire d'Inscription</title>
+    <!-- Inclure les styles Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Formulaire d'Inscription</h2>
+    <?php
+    $erreurs = isset($_SESSION['erreurs']) ? $_SESSION['erreurs'] : [];
+    unset($_SESSION['erreurs']); // Effacez les erreurs de la session
+
+    // Afficher les erreurs
+    if (!empty($erreurs)) {
+        echo '<div class="alert alert-danger">';
+        foreach ($erreurs as $erreur) {
+            echo "<p>$erreur</p>";
+        }
+        echo '</div>';
+    }
+    ?>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+        <!-- Champ : Username -->
+        <div class="form-group">
+            <label for="username">Identifiant</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+
+        <!-- Champ : Adresse e-mail -->
+        <div class="form-group">
+            <label for="email">Adresse e-mail</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+
+        <!-- Champ : Mot de passe -->
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+
+        <!-- Champ : Répéter le mot de passe -->
+        <div class="form-group">
+            <label for="password_repeat">Répéter le mot de passe</label>
+            <input type="password" class="form-control" id="password_repeat" name="password_repeat" required>
+        </div>
+
+        <!-- Bouton d'envoi -->
+        <button type="submit" class="btn btn-primary">S'inscrire</button>
+    </form>
+</div>
+<!-- Inclure les scripts Bootstrap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
