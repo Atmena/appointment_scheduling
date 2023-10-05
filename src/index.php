@@ -22,7 +22,12 @@ $jwtMiddleware = function ($request, $handler) {
     }
 };
 
-// Ajoutez vos routes ici
+$app->group('/api', function ($group) use ($jwtMiddleware) {
+    $group->post('/login', 'App\Controller\UserController:login');
+    $group->post('/appointments', 'App\Controller\AppointmentController:create')->add($jwtMiddleware);
+    $group->get('/appointments', 'App\Controller\AppointmentController:list')->add($jwtMiddleware);
+    // Ajoutez d'autres routes CRUD pour les rendez-vous ici
+});
 
 $app->run();
 ?>
