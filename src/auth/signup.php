@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $erreurs = [];
 
     if (empty($username)) {
-        $erreurs[] = "Le prénom est requis.";
+        $erreurs[] = "L'identifiant' est requis.";
     }
 
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -26,11 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $host = 'db';
     $dbname = getenv('MYSQL_DATABASE');
-    $username = getenv('MYSQL_USER');
+    $sqlusername = getenv('MYSQL_USER');
     $passwd = getenv('MYSQL_PASSWORD');
 
     try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $passwd);
+        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $sqlusername, $passwd);
     } catch (PDOException $e) {
         die("Erreur de connexion à la base de données: " . $e->getMessage());
     }

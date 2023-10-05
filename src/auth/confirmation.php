@@ -29,7 +29,7 @@
             countdownElement.textContent = seconds;
         } else {
             // Rediriger vers index.php après le compte à rebours
-            window.location.href = "index.php";
+            window.location.href = "connection.php";
         }
     }
 
